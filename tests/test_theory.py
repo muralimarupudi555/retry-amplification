@@ -30,7 +30,8 @@ def test_attempts_rise_with_the_cap():
 
 def test_capped_series_stays_under_the_uncapped_limit():
     for p in (0.1, 0.5, 0.9):
-        assert theory.expected_attempts_per_message(p, 8) < theory.uncapped_attempts_per_message(p)
+        capped = theory.expected_attempts_per_message(p, 8)
+        assert capped < theory.uncapped_attempts_per_message(p)
 
 
 def test_uncapped_limit_is_one_over_success():

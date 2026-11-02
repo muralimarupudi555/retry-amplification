@@ -59,7 +59,7 @@ def test_budgeted_policy_accepts_a_budget():
 
 def test_config_is_frozen():
     config = ScenarioConfig()
-    with pytest.raises(Exception):
+    with pytest.raises(AttributeError):
         config.ack_loss = 0.9  # type: ignore[misc]
 
 
