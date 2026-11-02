@@ -1,0 +1,22 @@
+# The database these measurements run against.
+#
+# Pinned to a patch version rather than a tag that moves. The timings in E3 are properties
+# of a specific executor and a specific index implementation; a reader who runs this
+# against a different version should expect different milliseconds and the same ratios.
+#
+# The idempotency ledger relies on PostgreSQL's unique index to decide which attempt wins,
+# so that behaviour is being measured rather than assumed. That is the reason this
+# repository talks to a real database instead of a dictionary with a lock around it.
+services:
+  postgres:
+    image: postgres:16.15
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - "5433:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 3s
+      retries: 30

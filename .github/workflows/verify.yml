@@ -1,0 +1,66 @@
+# The gate. It runs what `make verify` runs, against the same pinned database, so a green
+# tick here and a green run locally mean the same thing.
+#
+# The experiments are not run here. They take minutes, they are sensitive to what else the
+# runner is doing, and E3 in particular measures sub-millisecond operations that a shared
+# CI box cannot hold still. What CI does instead is re-derive the series from theory.py
+# and check the committed measurements against it, which is a claim that holds on any
+# machine. ADR-004 argues the split.
+name: verify
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16.15
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres"
+          --health-interval 2s
+          --health-timeout 3s
+          --health-retries 30
+
+    env:
+      RETRY_AMPLIFICATION_DSN: postgresql://postgres:postgres@127.0.0.1:5433/postgres
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install
+        run: python -m pip install -e ".[dev]"
+
+      - name: Lint
+        run: python -m ruff check .
+
+      - name: Tests
+        run: python -m pytest
+
+      - name: Laws still hold
+        run: python tools/check_laws.py
+
+      - name: Documents still match the measurements
+        run: |
+          python tools/render_tables.py
+          python tools/collect_metrics.py
+          python tools/check_numbers.py
+
+      - name: Nothing regenerated differs from what was committed
+        run: |
+          python tools/render_diagram.py
+          python tools/render_tables.py
+          git diff --exit-code docs/delivery.svg README.md
