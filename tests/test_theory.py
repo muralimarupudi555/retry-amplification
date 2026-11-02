@@ -91,3 +91,38 @@ def test_retry_probability_combines_both_causes():
 def test_agreement_band_is_relative():
     assert theory.agrees(1.02, 1.00, tolerance=0.05)
     assert not theory.agrees(1.30, 1.00, tolerance=0.05)
+
+
+def test_the_binomial_band_widens_with_the_rate():
+    narrow = theory.binomial_band(4000, 0.001)
+    wide = theory.binomial_band(4000, 0.5)
+    assert (narrow[1] - narrow[0]) < (wide[1] - wide[0])
+
+
+def test_the_band_is_centred_on_the_expected_count():
+    low, high = theory.binomial_band(4000, 0.25)
+    assert low < 1000 < high
+    assert (low + high) / 2 == pytest.approx(1000)
+
+
+def test_a_rare_event_gets_a_band_wider_than_a_relative_tolerance_would_allow():
+    """The failure that put this function here.
+
+    Sixteen expected in four thousand has a standard deviation of four, so a count of
+    twenty-nine is unusual but not evidence of a broken mechanism. A flat 25% relative
+    tolerance rejects it; a band built from the sample size does not.
+    """
+    expected = 4000 * 0.5**8
+    assert not theory.agrees(29 / 4000, 0.5**8, 0.25)
+    assert theory.count_agrees(29, 4000, 0.5**8)
+    assert expected == pytest.approx(15.625)
+
+
+def test_the_band_still_rejects_a_real_disagreement():
+    assert not theory.count_agrees(400, 4000, 0.5**8)
+    assert not theory.count_agrees(0, 4000, 0.5)
+
+
+def test_the_band_tolerates_one_extra_event_near_zero():
+    """At an expectation under one, a single event is not evidence of anything."""
+    assert theory.count_agrees(1, 4000, 0.5**12)

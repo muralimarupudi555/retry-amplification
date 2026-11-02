@@ -36,12 +36,20 @@ the failure rate, not by patience.
 
 from __future__ import annotations
 
+import math
+
 from retry_amplification.config import ScenarioConfig
 
 # Measured rates come from a finite number of messages, so they carry sampling error. This
 # band is wide enough to absorb it at the sample sizes used here and narrow enough that a
 # real disagreement with the series would fail.
 AGREEMENT_TOLERANCE = 0.05
+
+# How many standard deviations a count may sit from its expectation before the law check
+# calls it a disagreement. Four is chosen for the number of checks run, not for elegance:
+# at six rare-event checks per verify, a three-sigma band fails a correct build roughly
+# once in six hundred runs, which is often enough that people start ignoring it.
+SIGMAS = 4.0
 
 
 def retry_probability(ack_loss: float, handler_failure: float = 0.0) -> float:
@@ -103,3 +111,31 @@ def agrees(measured: float, predicted: float,
     if predicted <= 0:
         return measured <= tolerance
     return abs(measured - predicted) / predicted <= tolerance
+
+
+def binomial_band(trials: int, probability: float,
+                  sigmas: float = SIGMAS) -> tuple[float, float]:
+    """The count a rate of `probability` should produce in `trials`, with its spread.
+
+    A relative tolerance is the wrong instrument for a rare event. At a cap of eight the
+    series predicts about sixteen unacknowledged messages in four thousand, and the
+    standard deviation of that count is four - so a perfectly correct run lands anywhere
+    between eight and twenty-four, which is a 50% relative error that means nothing at
+    all. An early version of the law check used a flat 25% band here and failed on a
+    seed that was behaving exactly as the series says it should.
+
+    The width of the band has to come from the sample size, which is the same argument
+    this repository makes about reporting corruption as a rate in the first place.
+    """
+    expected = trials * probability
+    spread = math.sqrt(trials * probability * (1.0 - probability))
+    # The floor keeps the band meaningful when the expected count is near zero, where a
+    # single extra event is not evidence of anything.
+    margin = sigmas * spread + 1.0
+    return expected - margin, expected + margin
+
+
+def count_agrees(observed: int, trials: int, probability: float,
+                 sigmas: float = SIGMAS) -> bool:
+    low, high = binomial_band(trials, probability, sigmas)
+    return low <= observed <= high
