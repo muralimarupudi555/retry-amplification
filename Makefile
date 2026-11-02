@@ -36,15 +36,18 @@ diagram:
 tables:
 	$(PYTHON) tools/render_tables.py
 
+# A transcript carries measured timings, so regenerating it dirties the tree. It
+# belongs with the measurements rather than in the gate: a `make verify` that leaves
+# uncommitted changes behind is one people stop reading the output of.
 cli:
 	$(PYTHON) tools/capture_cli.py
 
-verify: lint test diagram tables cli
+verify: lint test diagram tables
 	$(PYTHON) tools/check_laws.py
 	$(PYTHON) tools/collect_metrics.py
 	$(PYTHON) tools/check_numbers.py
 
-bench:
+bench: cli
 	$(PYTHON) experiments/e1_one_number_two_bills.py
 	$(PYTHON) experiments/e2_the_cap_is_a_trade.py
 	$(PYTHON) experiments/e3_what_the_ledger_costs.py
