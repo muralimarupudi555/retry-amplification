@@ -14,7 +14,8 @@ downstream ever notices.
 from __future__ import annotations
 
 import random
-from dataclasses import dataclass
+import time
+from dataclasses import dataclass, field
 
 import psycopg
 
@@ -59,6 +60,8 @@ class Handler:
     seed: int = 0
     applies: int = 0
     skipped: int = 0
+    apply_ms: list[float] = field(default_factory=list)
+    skip_ms: list[float] = field(default_factory=list)
 
     def __post_init__(self) -> None:
         self._rng = random.Random(self.seed + 977)
@@ -75,8 +78,10 @@ class Handler:
             self._apply(message_id)
 
     def _apply(self, message_id: str) -> None:
+        started = time.perf_counter()
         with self.conn.transaction():
             self.conn.execute("UPDATE ra_account SET balance = balance + 1 WHERE id = 1")
+        self.apply_ms.append((time.perf_counter() - started) * 1000.0)
         self.applies += 1
 
     def _apply_once(self, message_id: str) -> None:
@@ -85,7 +90,13 @@ class Handler:
         ON CONFLICT DO NOTHING with RETURNING is the whole mechanism: the row comes back
         only to the insert that created it, so exactly one attempt per key reaches the
         update, and the database decides which one rather than the application.
+
+        The two paths are timed apart because they cost different amounts and their mix
+        changes with the loss rate. A single median over both measures the mix as much as
+        the mechanism, which is how the first version of E3 managed to report that the
+        ledger gets cheaper the more work it has to do.
         """
+        started = time.perf_counter()
         with self.conn.transaction():
             claimed = self.conn.execute(
                 "INSERT INTO ra_applied (key) VALUES (%s) "
@@ -94,6 +105,8 @@ class Handler:
             ).fetchone()
             if claimed is None:
                 self.skipped += 1
+                self.skip_ms.append((time.perf_counter() - started) * 1000.0)
                 return
             self.conn.execute("UPDATE ra_account SET balance = balance + 1 WHERE id = 1")
+        self.apply_ms.append((time.perf_counter() - started) * 1000.0)
         self.applies += 1

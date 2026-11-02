@@ -30,6 +30,8 @@ class RunResult:
     final_balance: int
     applies: int
     skipped: int
+    apply_p50_ms: float
+    skip_p50_ms: float
     ledger_rows: int
     wall_seconds: float
     attempt_p50_ms: float
@@ -64,6 +66,8 @@ class RunResult:
             "amplification": round(self.amplification, 4),
             "exactly_once": self.exactly_once,
             "applies": self.applies, "skipped": self.skipped,
+            "apply_p50_ms": round(self.apply_p50_ms, 4),
+            "skip_p50_ms": round(self.skip_p50_ms, 4),
             "ledger_rows": self.ledger_rows,
             "wall_seconds": round(self.wall_seconds, 4),
             "attempt_p50_ms": round(self.attempt_p50_ms, 4),
@@ -122,6 +126,8 @@ def run_scenario(config: ScenarioConfig) -> RunResult:
         config=config, stats=stats,
         final_balance=read_balance(config.dsn),
         applies=handler.applies, skipped=handler.skipped,
+        apply_p50_ms=_percentile(sorted(handler.apply_ms), 0.50),
+        skip_p50_ms=_percentile(sorted(handler.skip_ms), 0.50),
         ledger_rows=ledger_size(config.dsn), wall_seconds=wall,
         attempt_p50_ms=_percentile(ordered, 0.50),
         attempt_p99_ms=_percentile(ordered, 0.99),
