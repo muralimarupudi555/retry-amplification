@@ -1,0 +1,53 @@
+# ADR-004: What `make verify` rechecks, and what it deliberately does not
+
+**Status.** Accepted.
+
+## The split
+
+`make verify` runs on every push and must pass on a clean clone with no network beyond the
+package index and a local PostgreSQL. `make bench` runs the four experiments and takes
+minutes.
+
+A benchmark that runs on every commit stops being run at all, so the experiments are not
+in the gate. What is in the gate is everything that can go stale without anyone noticing.
+
+## What verify does
+
+**Lint and the full suite.** 87 tests, including the ones that assert the ledger declines
+exactly what the naive handler overapplies on the same seeded delivery.
+
+**The law check.** `tools/check_laws.py` re-derives the geometric series from `theory.py`
+and compares it to every row of every committed sweep. This is the part that makes the
+published figures checkable on hardware that has never run them. It also catches the most
+embarrassing possible failure - a results file edited by hand to look better - and it was
+run against deliberately corrupted data to confirm it exits non-zero rather than
+trusted to.
+
+**The number check.** `tools/check_numbers.py` matches in both directions. Every metric
+must appear in a checked document through one of its anchor phrases, so a figure that
+drifts breaks the build instead of the reader's trust. And every decimal in the prose must
+correspond to a metric, so a number nothing re-measures cannot quietly move in.
+
+**Regeneration.** The diagram and the captured CLI output are rebuilt and compared against
+what was committed. A diagram that no longer matches the mechanism it describes is a
+failing build.
+
+## What verify does not do
+
+It does not re-run the experiments, so it cannot catch a change that alters the
+measurements. That is `make bench`'s job and it is a manual step.
+
+The gap is real and bounded by the law check: if the mechanism changed enough to move the
+measurements, the committed numbers would stop obeying the series, and verify would fail
+without having re-run anything. A change that moves the numbers and keeps them on the
+series is one verify will miss, and that is the honest limit of this arrangement.
+
+## Why CI does not run the benchmarks
+
+E3 measures sub-millisecond operations. A shared CI runner cannot hold still enough for
+that, and a benchmark that fails intermittently on infrastructure noise teaches everyone
+to re-run the job until it goes green - which is worse than not having it, because it
+trains people to dismiss a real failure.
+
+CI checks the claims that are machine-independent. The timings stay local and say on their
+face what they were measured on.
