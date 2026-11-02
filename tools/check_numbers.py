@@ -81,7 +81,8 @@ def forward_check(payload: dict, documents: dict[str, str]) -> list[str]:
 
     for key in payload["metrics"]:
         if key not in anchors:
-            problems.append(f"GAP   {key}: no anchor phrase defined, nothing guards this figure")
+            problems.append(
+                f"GAP   {key}: no anchor phrase defined, nothing guards this figure")
             continue
         phrases = [normalise(a.format(display[key])) for a in anchors[key]]
         if not any(p in doc for doc in documents.values() for p in phrases):
@@ -92,11 +93,19 @@ def forward_check(payload: dict, documents: dict[str, str]) -> list[str]:
 
 
 def reverse_check(payload: dict, documents: dict[str, str]) -> list[str]:
-    """Every decimal in the prose must correspond to a metric."""
+    """Every decimal in the prose must correspond to a metric.
+
+    A display string carries its unit - "5.0%", "3.83x" - but the decimal pattern matches
+    only the digits, so the bare "5.0" has to be registered too or every percentage in the
+    prose is reported as an unguarded number. That was not a hypothetical: the first run
+    of this checker against the decision records flagged two correct, anchored figures
+    for exactly this reason.
+    """
     known = set()
     for key, shown in payload["display"].items():
         known.add(shown)
         known.add(shown.lstrip("+"))
+        known.add(shown.lstrip("+").rstrip("%x"))
         if key in payload["anchors"]:
             known.add(f"{payload['metrics'][key]}")
 

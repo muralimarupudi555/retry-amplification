@@ -1,0 +1,157 @@
+{
+  "metrics": {
+    "e1_messages": 4000,
+    "e1_worst_inflation": 3.0655,
+    "e1_worst_overapplied": 8262,
+    "e1_worst_ack_loss": 0.75,
+    "e1_mid_inflation": 1.9247,
+    "e1_mid_overapplied": 3699,
+    "e2_cheapest_cap": 1,
+    "e2_cheapest_unacknowledged": 0.49575,
+    "e2_dearest_cap": 12,
+    "e2_dearest_overapplied": 3947,
+    "e2_dearest_unacknowledged": 0.00025,
+    "e2_repeats": 5,
+    "e2_dearest_unacknowledged_count": 5,
+    "e3_apply_overhead": 0.3013,
+    "e3_decline_share": 0.3316,
+    "e3_overhead_drift": 0.0393,
+    "e3_reconstruction_error": 0.0502,
+    "e3_ledger_rows_per_message": 1.0,
+    "e3_attempts_absorbed": 7699,
+    "e4_attempts": 3828,
+    "e4_backoff_attempts": 3828,
+    "e4_backoff_slowdown": 3.83,
+    "e4_budget_attempts": 2400,
+    "e4_attempts_saved": 1428,
+    "e4_messages_abandoned": 718,
+    "e4_budget_unacknowledged": 0.3885,
+    "e4_immediate_unacknowledged": 0.0295,
+    "tests": 87
+  },
+  "display": {
+    "e1_worst_inflation": "3.066",
+    "e1_worst_ack_loss": "0.75",
+    "e1_mid_inflation": "1.925",
+    "e2_cheapest_unacknowledged": "49.6%",
+    "e2_dearest_unacknowledged": "0.025%",
+    "e3_apply_overhead": "30%",
+    "e3_decline_share": "0.33",
+    "e3_overhead_drift": "0.039",
+    "e3_reconstruction_error": "5.0%",
+    "e3_ledger_rows_per_message": "1.000",
+    "e4_backoff_slowdown": "3.83",
+    "e4_budget_unacknowledged": "38.9%",
+    "e4_immediate_unacknowledged": "2.9%",
+    "e1_messages": "4000",
+    "e1_worst_overapplied": "8262",
+    "e1_mid_overapplied": "3699",
+    "e2_cheapest_cap": "1",
+    "e2_dearest_cap": "12",
+    "e2_dearest_overapplied": "3947",
+    "e2_repeats": "5",
+    "e2_dearest_unacknowledged_count": "5",
+    "e3_attempts_absorbed": "7699",
+    "e4_attempts": "3828",
+    "e4_backoff_attempts": "3828",
+    "e4_budget_attempts": "2400",
+    "e4_attempts_saved": "1428",
+    "e4_messages_abandoned": "718",
+    "tests": "87"
+  },
+  "anchors": {
+    "e1_messages": [
+      "{} messages"
+    ],
+    "e1_worst_inflation": [
+      "inflates the balance {}x",
+      "{}x"
+    ],
+    "e1_worst_overapplied": [
+      "{} units that should not exist"
+    ],
+    "e1_worst_ack_loss": [
+      "{} of acknowledgements lost"
+    ],
+    "e1_mid_inflation": [
+      "half the acknowledgements lost, {}x"
+    ],
+    "e1_mid_overapplied": [
+      "{} units of money"
+    ],
+    "e2_cheapest_cap": [
+      "a cap of {}"
+    ],
+    "e2_cheapest_unacknowledged": [
+      "{} of messages never acknowledged"
+    ],
+    "e2_dearest_cap": [
+      "raising it to {}"
+    ],
+    "e2_dearest_overapplied": [
+      "buys {} units"
+    ],
+    "e2_dearest_unacknowledged": [
+      "down to {}"
+    ],
+    "e2_repeats": [
+      "pooled over {} seeds"
+    ],
+    "e2_dearest_unacknowledged_count": [
+      "{} messages out of"
+    ],
+    "e3_apply_overhead": [
+      "costs {} on the apply path"
+    ],
+    "e3_decline_share": [
+      "{} of the cost of performing one"
+    ],
+    "e3_overhead_drift": [
+      "moved {} between halves"
+    ],
+    "e3_reconstruction_error": [
+      "reconstructs it to within {}"
+    ],
+    "e3_ledger_rows_per_message": [
+      "{} rows per message"
+    ],
+    "e3_attempts_absorbed": [
+      "absorbing {} attempts"
+    ],
+    "e4_attempts": [
+      "{} attempts"
+    ],
+    "e4_backoff_attempts": [
+      "the same {} attempts"
+    ],
+    "e4_backoff_slowdown": [
+      "{}x as long"
+    ],
+    "e4_budget_attempts": [
+      "down to {} attempts"
+    ],
+    "e4_attempts_saved": [
+      "removes {} attempts"
+    ],
+    "e4_messages_abandoned": [
+      "abandoning {} messages"
+    ],
+    "e4_budget_unacknowledged": [
+      "{} never acknowledged"
+    ],
+    "e4_immediate_unacknowledged": [
+      "from {} never acknowledged"
+    ],
+    "tests": [
+      "{} tests"
+    ]
+  },
+  "checked_documents": [
+    "README.md",
+    "docs/adr/ADR-001-an-in-process-broker.md",
+    "docs/adr/ADR-002-two-measurements-that-were-wrong.md",
+    "docs/adr/ADR-003-the-series-as-the-apparatus-check.md",
+    "docs/adr/ADR-004-what-verify-rechecks.md",
+    "docs/adr/ADR-005-what-this-cannot-measure.md"
+  ]
+}

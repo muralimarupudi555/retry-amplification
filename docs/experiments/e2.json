@@ -1,0 +1,80 @@
+{
+  "experiment": "e2_the_cap_is_a_trade",
+  "ack_loss": 0.5,
+  "messages": 4000,
+  "repeats": 5,
+  "rows": [
+    {
+      "max_attempts": 1,
+      "attempts_per_message": 1.0,
+      "predicted_attempts": 1.0,
+      "naive_balance": 4000,
+      "overapplied": 0,
+      "idempotent_balance": 4000,
+      "unacknowledged_count": 9915,
+      "unacknowledged_rate": 0.49575,
+      "predicted_unacknowledged": 0.5
+    },
+    {
+      "max_attempts": 2,
+      "attempts_per_message": 1.4986,
+      "predicted_attempts": 1.5,
+      "naive_balance": 5975,
+      "overapplied": 1975,
+      "idempotent_balance": 4000,
+      "unacknowledged_count": 4920,
+      "unacknowledged_rate": 0.246,
+      "predicted_unacknowledged": 0.25
+    },
+    {
+      "max_attempts": 3,
+      "attempts_per_message": 1.7449,
+      "predicted_attempts": 1.75,
+      "naive_balance": 6983,
+      "overapplied": 2983,
+      "idempotent_balance": 4000,
+      "unacknowledged_count": 2482,
+      "unacknowledged_rate": 0.1241,
+      "predicted_unacknowledged": 0.125
+    },
+    {
+      "max_attempts": 5,
+      "attempts_per_message": 1.9316,
+      "predicted_attempts": 1.9375,
+      "naive_balance": 7699,
+      "overapplied": 3699,
+      "idempotent_balance": 4000,
+      "unacknowledged_count": 639,
+      "unacknowledged_rate": 0.03195,
+      "predicted_unacknowledged": 0.03125
+    },
+    {
+      "max_attempts": 8,
+      "attempts_per_message": 1.9882,
+      "predicted_attempts": 1.9922,
+      "naive_balance": 7890,
+      "overapplied": 3890,
+      "idempotent_balance": 4000,
+      "unacknowledged_count": 91,
+      "unacknowledged_rate": 0.00455,
+      "predicted_unacknowledged": 0.00391
+    },
+    {
+      "max_attempts": 12,
+      "attempts_per_message": 1.9969,
+      "predicted_attempts": 1.9995,
+      "naive_balance": 7947,
+      "overapplied": 3947,
+      "idempotent_balance": 4000,
+      "unacknowledged_count": 5,
+      "unacknowledged_rate": 0.00025,
+      "predicted_unacknowledged": 0.00024
+    }
+  ],
+  "no_cap_improves_both": true,
+  "idempotent_balance_is_flat_across_caps": true,
+  "cheapest_cap_overapplied": 0,
+  "cheapest_cap_unacknowledged": 0.49575,
+  "dearest_cap_overapplied": 3947,
+  "dearest_cap_unacknowledged": 0.00025
+}

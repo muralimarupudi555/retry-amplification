@@ -1,0 +1,46 @@
+{
+  "experiment": "e4_backoff_does_not_help",
+  "messages": 2000,
+  "ack_loss": 0.5,
+  "retry_budget": 400,
+  "rows": [
+    {
+      "policy": "immediate",
+      "attempts": 3828,
+      "amplification": 1.914,
+      "wall_seconds": 2.117,
+      "overapplied": 1828,
+      "unacknowledged": 59,
+      "unacknowledged_rate": 0.0295,
+      "retries_refused": 0
+    },
+    {
+      "policy": "exponential_backoff",
+      "attempts": 3828,
+      "amplification": 1.914,
+      "wall_seconds": 8.112,
+      "overapplied": 1828,
+      "unacknowledged": 59,
+      "unacknowledged_rate": 0.0295,
+      "retries_refused": 0
+    },
+    {
+      "policy": "budgeted",
+      "attempts": 2400,
+      "amplification": 1.2,
+      "wall_seconds": 1.502,
+      "overapplied": 400,
+      "unacknowledged": 777,
+      "unacknowledged_rate": 0.3885,
+      "retries_refused": 767
+    }
+  ],
+  "backoff_attempts_identical": true,
+  "backoff_corruption_identical": true,
+  "backoff_is_slower": true,
+  "backoff_slowdown": 3.83,
+  "budget_cuts_attempts": true,
+  "budget_abandons_messages": true,
+  "attempts_saved_by_budget": 1428,
+  "messages_abandoned_by_budget": 718
+}

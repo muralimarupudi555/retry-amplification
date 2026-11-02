@@ -8,6 +8,7 @@ a sentence that has gone stale around it, and one looking for "5" matches half t
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 from pathlib import Path
 
@@ -37,20 +38,34 @@ def load(name: str) -> dict:
 
 
 def count_tests() -> int:
+    """Count collected tests, tolerating the several shapes pytest -q has used.
+
+    Recent versions print one `path/to/test_x.py: 19` line per file; older ones print a
+    node id per test and a `N tests collected` summary. All three are handled, and a zero
+    is treated as a failure rather than published as a figure, because `0 tests` in a
+    README is worse than a crash.
+    """
     out = subprocess.run(
         ["python3", "-m", "pytest", "--collect-only", "-q"],
         cwd=ROOT, capture_output=True, text=True, check=False,
     ).stdout
+
+    per_file = re.findall(r"^\S+\.py: (\d+)$", out, re.MULTILINE)
+    if per_file:
+        return sum(int(n) for n in per_file)
+
     for line in reversed(out.splitlines()):
-        if "test" in line and "collected" in line:
-            return int(line.split()[0])
-    return sum(1 for line in out.splitlines() if "::" in line)
+        match = re.match(r"^(\d+) tests? collected", line.strip())
+        if match:
+            return int(match.group(1))
 
-
-def count_commits() -> int:
-    out = subprocess.run(["git", "rev-list", "--count", "HEAD"],
-                         cwd=ROOT, capture_output=True, text=True, check=False)
-    return int(out.stdout.strip() or 0)
+    node_ids = sum(1 for line in out.splitlines() if "::" in line)
+    if node_ids == 0:
+        raise SystemExit(
+            "could not count tests from pytest's output. The collection format changed; "
+            "fix count_tests() rather than letting a zero reach the README."
+        )
+    return node_ids
 
 
 def main() -> None:
@@ -95,7 +110,6 @@ def main() -> None:
         "e4_immediate_unacknowledged": immediate["unacknowledged_rate"],
 
         "tests": count_tests(),
-        "commits": count_commits(),
     }
 
     display = {
@@ -145,7 +159,6 @@ def main() -> None:
         "e4_budget_unacknowledged": ["{} never acknowledged"],
         "e4_immediate_unacknowledged": ["from {} never acknowledged"],
         "tests": ["{} tests"],
-        "commits": ["{} commits"],
     }
 
     OUT.write_text(json.dumps({

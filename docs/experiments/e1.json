@@ -1,0 +1,103 @@
+{
+  "experiment": "e1_one_number_two_bills",
+  "messages": 4000,
+  "max_attempts": 5,
+  "rows": [
+    {
+      "ack_loss": 0.0,
+      "predicted_attempts": 1.0,
+      "naive_attempts": 1.0,
+      "idempotent_attempts": 1.0,
+      "naive_balance": 4000,
+      "idempotent_balance": 4000,
+      "naive_corruption": 1.0,
+      "idempotent_corruption": 1.0,
+      "overapplied": 0,
+      "ledger_skipped": 0,
+      "unacknowledged_rate": 0.0
+    },
+    {
+      "ack_loss": 0.1,
+      "predicted_attempts": 1.1111,
+      "naive_attempts": 1.103,
+      "idempotent_attempts": 1.103,
+      "naive_balance": 4412,
+      "idempotent_balance": 4000,
+      "naive_corruption": 1.103,
+      "idempotent_corruption": 1.0,
+      "overapplied": 412,
+      "ledger_skipped": 412,
+      "unacknowledged_rate": 0.0
+    },
+    {
+      "ack_loss": 0.25,
+      "predicted_attempts": 1.332,
+      "naive_attempts": 1.3205,
+      "idempotent_attempts": 1.3205,
+      "naive_balance": 5282,
+      "idempotent_balance": 4000,
+      "naive_corruption": 1.3205,
+      "idempotent_corruption": 1.0,
+      "overapplied": 1282,
+      "ledger_skipped": 1282,
+      "unacknowledged_rate": 0.0018
+    },
+    {
+      "ack_loss": 0.4,
+      "predicted_attempts": 1.6496,
+      "naive_attempts": 1.6305,
+      "idempotent_attempts": 1.6305,
+      "naive_balance": 6522,
+      "idempotent_balance": 4000,
+      "naive_corruption": 1.6305,
+      "idempotent_corruption": 1.0,
+      "overapplied": 2522,
+      "ledger_skipped": 2522,
+      "unacknowledged_rate": 0.0123
+    },
+    {
+      "ack_loss": 0.5,
+      "predicted_attempts": 1.9375,
+      "naive_attempts": 1.9247,
+      "idempotent_attempts": 1.9247,
+      "naive_balance": 7699,
+      "idempotent_balance": 4000,
+      "naive_corruption": 1.9247,
+      "idempotent_corruption": 1.0,
+      "overapplied": 3699,
+      "ledger_skipped": 3699,
+      "unacknowledged_rate": 0.0315
+    },
+    {
+      "ack_loss": 0.6,
+      "predicted_attempts": 2.3056,
+      "naive_attempts": 2.2845,
+      "idempotent_attempts": 2.2845,
+      "naive_balance": 9138,
+      "idempotent_balance": 4000,
+      "naive_corruption": 2.2845,
+      "idempotent_corruption": 1.0,
+      "overapplied": 5138,
+      "ledger_skipped": 5138,
+      "unacknowledged_rate": 0.0735
+    },
+    {
+      "ack_loss": 0.75,
+      "predicted_attempts": 3.0508,
+      "naive_attempts": 3.0655,
+      "idempotent_attempts": 3.0655,
+      "naive_balance": 12262,
+      "idempotent_balance": 4000,
+      "naive_corruption": 3.0655,
+      "idempotent_corruption": 1.0,
+      "overapplied": 8262,
+      "ledger_skipped": 8262,
+      "unacknowledged_rate": 0.2402
+    }
+  ],
+  "identical_attempts": true,
+  "ledger_catches_exactly": true,
+  "idempotent_always_exact": true,
+  "worst_inflation": 3.0655,
+  "worst_overapplied": 8262
+}
